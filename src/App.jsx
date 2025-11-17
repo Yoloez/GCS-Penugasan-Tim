@@ -1,17 +1,21 @@
 import React from "react";
 import { Route, Routes } from "react-router-dom";
-import Home from "./pages/Home.jsx";
-import Profile from "./pages/Profile.jsx";
+import Header from "./components/Header.jsx";
 import Map from "./pages/Map.jsx";
+import Editor from "./pages/Editor.jsx";
+import Plans from "./pages/Plans.jsx";
 
 const App = () => {
-  return (
-    <Routes>
-      <Route path="/" element={<Home />} />
-      <Route path="/profile" element={<Profile />} />
-      <Route path="/map" element={<Map />} />
-    </Routes>
-  );
+	return (
+		<div>
+			<Header />
+			<Routes>
+				<Route path="/map" element={<Map />} />
+				<Route path="/editor" element={<Editor />} />
+				<Route path="/" element={<Plans />} />
+			</Routes>
+		</div>
+	);
 };
 
 export default App;
