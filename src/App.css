@@ -1,0 +1,24 @@
+@import "tailwindcss";
+
+#root {
+  /* max-width: 1280px; */
+  margin: 0 auto;
+  max-width: auto;
+  padding: 2rem;
+  text-align: center;
+}
+
+/* .btn{
+  margin-top: 1rem;
+  padding: 1rem;
+  background-color: antiquewhite;
+  color: black;
+} */
+.nav{
+  background-color: lightgray;
+  padding: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+}
