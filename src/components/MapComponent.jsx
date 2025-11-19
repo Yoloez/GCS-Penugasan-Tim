@@ -15,7 +15,8 @@ const uavIcon = L.icon({
 // Komponen untuk map controller
 const MapController = ({ uavPosition, setUavPosition, isRecording, trajectory, setTrajectory }) => {
   const map = useMap();
-  const speed = 0.001; // Kecepatan pergerakan dalam derajat
+  const speed = 0.00001; // Kecepatan pergerakan dalam derajat
+  const [keysPressed, setKeysPressed] = useState({});
 
   useEffect(() => {
     // Center map ke UAV
@@ -24,46 +25,56 @@ const MapController = ({ uavPosition, setUavPosition, isRecording, trajectory, s
 
   useEffect(() => {
     const handleKeyDown = (e) => {
-      const [lat, lng] = uavPosition;
-      let newPosition = null;
+      const key = e.key.toLowerCase();
+      const validKeys = ["arrowup", "arrowdown", "arrowleft", "arrowright", "w", "a", "s", "d"];
 
-      switch (e.key.toLowerCase()) {
-        case "arrowup":
-        case "w":
-          newPosition = [lat + speed, lng];
-          e.preventDefault();
-          break;
-        case "arrowdown":
-        case "s":
-          newPosition = [lat - speed, lng];
-          e.preventDefault();
-          break;
-        case "arrowleft":
-        case "a":
-          newPosition = [lat, lng - speed];
-          e.preventDefault();
-          break;
-        case "arrowright":
-        case "d":
-          newPosition = [lat, lng + speed];
-          e.preventDefault();
-          break;
-        default:
-          break;
-      }
-
-      if (newPosition) {
-        setUavPosition(newPosition);
-        // Tambah ke trajectory jika recording
-        if (isRecording) {
-          setTrajectory([...trajectory, newPosition]);
-        }
+      if (validKeys.includes(key)) {
+        e.preventDefault();
+        setKeysPressed((prev) => ({ ...prev, [key]: true }));
       }
     };
 
+    const handleKeyUp = (e) => {
+      const key = e.key.toLowerCase();
+      setKeysPressed((prev) => ({ ...prev, [key]: false }));
+    };
+
     window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [uavPosition, setUavPosition, isRecording, trajectory, setTrajectory]);
+    window.addEventListener("keyup", handleKeyUp);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+      window.removeEventListener("keyup", handleKeyUp);
+    };
+  }, []);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      let deltaLat = 0;
+      let deltaLng = 0;
+
+      // Hitung pergerakan berdasarkan tombol yang ditekan
+      if (keysPressed["arrowup"] || keysPressed["w"]) deltaLat += speed;
+      if (keysPressed["arrowdown"] || keysPressed["s"]) deltaLat -= speed;
+      if (keysPressed["arrowleft"] || keysPressed["a"]) deltaLng -= speed;
+      if (keysPressed["arrowright"] || keysPressed["d"]) deltaLng += speed;
+
+      // Update posisi jika ada pergerakan
+      if (deltaLat !== 0 || deltaLng !== 0) {
+        const [lat, lng] = uavPosition;
+        const newPosition = [lat + deltaLat, lng + deltaLng];
+
+        setUavPosition(newPosition);
+
+        // Tambah ke trajectory jika recording
+        if (isRecording) {
+          setTrajectory((prev) => [...prev, newPosition]);
+        }
+      }
+    }, 5); // Update setiap 50ms untuk gerakan smooth
+
+    return () => clearInterval(interval);
+  }, [keysPressed, uavPosition, setUavPosition, isRecording, setTrajectory]);
 
   return null;
 };
