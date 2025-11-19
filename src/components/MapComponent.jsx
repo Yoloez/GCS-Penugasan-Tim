@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { MapContainer, TileLayer, Marker, Popup, useMap, Polyline } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
+import useKeyboardNavigation from "../hooks/useKeyboardNavigation";
 
 // Custom UAV icon
 const uavIcon = L.icon({
