@@ -221,6 +221,7 @@ const PlanningPage = () => {
 					onPlanLoad={handlePlanLoad}
 					onPlanDelete={handlePlanDelete}
 				/>
+				<Headers />
 			</div>
 		</div>
 	);
