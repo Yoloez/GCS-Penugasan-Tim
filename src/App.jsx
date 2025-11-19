@@ -19,6 +19,7 @@ function App() {
 				<Route path="/" element={<Navigate to="/planning" replace />} />
 				<Route path="/planning" element={<PlanningPageEnhanced />} />
 				<Route path="/simulation" element={<SimulationPage />} />
+				{/* <Route path="/simulation" element={< />} /> */}
 			</Routes>
 		</div>
 	);

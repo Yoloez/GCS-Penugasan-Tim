@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useEffect } from "react";
-import MapComponent from "../../components/MapComponent";
+import MapComponent from "../../components/MapPlanning";
 import PlanningControls from "../../components/PlanningControls";
 import PlanList from "../../components/PlanList";
 import {
