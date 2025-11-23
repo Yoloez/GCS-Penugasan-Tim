@@ -40,11 +40,13 @@ backend/
 ## 🚀 Quick Start
 
 ### Install Dependencies
+
 ```bash
 npm install
 ```
 
 ### Run Server
+
 ```bash
 npm start
 ```
@@ -52,6 +54,7 @@ npm start
 Server akan berjalan di: **http://localhost:3000**
 
 ### Development Mode (Auto-reload)
+
 ```bash
 npm run dev
 ```
@@ -59,10 +62,12 @@ npm run dev
 ## 📡 API Endpoints
 
 ### Root
+
 - `GET /` - API information
 - `GET /api` - API endpoints list
 
 ### Flight Plans
+
 - `GET /api/flight-plans` - Get all flight plans
 - `GET /api/flight-plans/:id` - Get single flight plan
 - `POST /api/flight-plans` - Create new flight plan
@@ -70,11 +75,13 @@ npm run dev
 - `DELETE /api/flight-plans/:id` - Delete flight plan
 
 ### Trajectories
+
 - `GET /api/trajectories` - Get all trajectories
 - `POST /api/trajectories` - Save new trajectory
 - `DELETE /api/trajectories/:id` - Delete trajectory
 
 ### UAV Position
+
 - `GET /api/uav-position` - Get latest position
 - `GET /api/uav-position/history?limit=100` - Get position history
 - `POST /api/uav-position` - Save new position
@@ -86,6 +93,7 @@ Lihat [API_DOCUMENTATION.md](./API_DOCUMENTATION.md) untuk detail lengkap.
 Database SQLite akan otomatis dibuat saat server pertama kali dijalankan.
 
 ### Tables:
+
 1. **flight_plans** - Menyimpan rencana penerbangan
 2. **trajectories** - Menyimpan rekaman jejak UAV
 3. **uav_positions** - Menyimpan histori posisi UAV
@@ -100,6 +108,7 @@ Database SQLite akan otomatis dibuat saat server pertama kali dijalankan.
 ## 📝 Example Usage
 
 ### Create Flight Plan
+
 ```bash
 curl -X POST http://localhost:3000/api/flight-plans \
   -H "Content-Type: application/json" \
@@ -111,11 +120,13 @@ curl -X POST http://localhost:3000/api/flight-plans \
 ```
 
 ### Get All Flight Plans
+
 ```bash
 curl http://localhost:3000/api/flight-plans
 ```
 
 ### Save UAV Position
+
 ```bash
 curl -X POST http://localhost:3000/api/uav-position \
   -H "Content-Type: application/json" \
@@ -146,7 +157,7 @@ npm test
 ✅ **Error Handling**: Comprehensive error handling di setiap layer  
 ✅ **Async/Await**: Modern JavaScript async patterns  
 ✅ **RESTful API**: Standard REST conventions  
-✅ **Clean Code**: Readable & maintainable code structure  
+✅ **Clean Code**: Readable & maintainable code structure
 
 ## 🔜 Future Improvements
 

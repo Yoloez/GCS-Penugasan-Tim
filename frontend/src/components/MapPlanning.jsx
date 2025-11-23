@@ -27,9 +27,17 @@ const MapEvents = ({ drawingMode, onPlanSave, onDrawingCancel }) => {
             setPoints([[lat, lng]]);
           } else if (points.length === 1) {
             // Complete rectangle on second click
+            // Calculate 4 corners (clockwise from top-left)
+            const [startLat, startLng] = points[0];
+            const rectangleCorners = [
+              [Math.max(startLat, lat), Math.min(startLng, lng)], // Top-left
+              [Math.max(startLat, lat), Math.max(startLng, lng)], // Top-right
+              [Math.min(startLat, lat), Math.max(startLng, lng)], // Bottom-right
+              [Math.min(startLat, lat), Math.min(startLng, lng)], // Bottom-left
+            ];
             onPlanSave({
               type: "rectangle",
-              points: [...points, [lat, lng]],
+              points: rectangleCorners, // 4 corner points
               shape: currentShape,
               createdAt: new Date().toISOString(),
             });
@@ -43,10 +51,24 @@ const MapEvents = ({ drawingMode, onPlanSave, onDrawingCancel }) => {
             setPoints([[lat, lng]]);
           } else if (points.length === 1) {
             // Complete circle on second click
-            const radius = Math.sqrt(Math.pow(lat - points[0][0], 2) + Math.pow(lng - points[0][1], 2)) * 111000; // Convert lat/lng distance to meters
+            const [centerLat, centerLng] = points[0];
+            const radius = Math.sqrt(Math.pow(lat - centerLat, 2) + Math.pow(lng - centerLng, 2)) * 111000; // Convert lat/lng distance to meters
+
+            // Generate circle waypoints: center + perimeter points (36 points = every 10 degrees)
+            const circleWaypoints = [[centerLat, centerLng]]; // Center point first
+            const numPoints = 36; // Number of points on perimeter
+            const radiusInDegrees = Math.sqrt(Math.pow(lat - centerLat, 2) + Math.pow(lng - centerLng, 2));
+
+            for (let i = 0; i < numPoints; i++) {
+              const angle = ((i * 360) / numPoints) * (Math.PI / 180); // Convert to radians
+              const perimeterLat = centerLat + radiusInDegrees * Math.cos(angle);
+              const perimeterLng = centerLng + radiusInDegrees * Math.sin(angle);
+              circleWaypoints.push([perimeterLat, perimeterLng]);
+            }
+
             onPlanSave({
               type: "circle",
-              points: [...points, [lat, lng]],
+              points: circleWaypoints, // Center + 36 perimeter points
               shape: { center: points[0], radius: radius },
               createdAt: new Date().toISOString(),
             });
@@ -106,9 +128,39 @@ const MapEvents = ({ drawingMode, onPlanSave, onDrawingCancel }) => {
     onEnter: () => {
       // Finalize drawing for all modes
       if (points.length > 0 && onPlanSave) {
+        let finalPoints = points;
+
+        // Process points based on drawing mode
+        if (drawingMode === "rectangle" && points.length === 2) {
+          // Calculate 4 corners for rectangle
+          const [startLat, startLng] = points[0];
+          const [endLat, endLng] = points[1];
+          finalPoints = [
+            [Math.max(startLat, endLat), Math.min(startLng, endLng)], // Top-left
+            [Math.max(startLat, endLat), Math.max(startLng, endLng)], // Top-right
+            [Math.min(startLat, endLat), Math.max(startLng, endLng)], // Bottom-right
+            [Math.min(startLat, endLat), Math.min(startLng, endLng)], // Bottom-left
+          ];
+        } else if (drawingMode === "circle" && points.length === 2) {
+          // Generate circle waypoints: center + perimeter
+          const [centerLat, centerLng] = points[0];
+          const [edgeLat, edgeLng] = points[1];
+          const radiusInDegrees = Math.sqrt(Math.pow(edgeLat - centerLat, 2) + Math.pow(edgeLng - centerLng, 2));
+
+          finalPoints = [[centerLat, centerLng]]; // Center point first
+          const numPoints = 36;
+
+          for (let i = 0; i < numPoints; i++) {
+            const angle = ((i * 360) / numPoints) * (Math.PI / 180);
+            const perimeterLat = centerLat + radiusInDegrees * Math.cos(angle);
+            const perimeterLng = centerLng + radiusInDegrees * Math.sin(angle);
+            finalPoints.push([perimeterLat, perimeterLng]);
+          }
+        }
+
         const planData = {
           type: drawingMode,
-          points: points,
+          points: finalPoints,
           shape: currentShape,
           createdAt: new Date().toISOString(),
         };

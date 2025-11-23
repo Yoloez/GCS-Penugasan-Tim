@@ -31,6 +31,7 @@ backend/
 ## Layer Responsibilities
 
 ### 1. **Models** (`src/models/`)
+
 - Menghandle business logic
 - Validasi data
 - Transformasi data (JSON parse/stringify)
@@ -38,6 +39,7 @@ backend/
 - **Tidak** menghandle HTTP requests/responses
 
 **Example:**
+
 ```javascript
 // flightPlanModel.js
 export async function create(data) {
@@ -50,6 +52,7 @@ export async function create(data) {
 ```
 
 ### 2. **Controllers** (`src/controllers/`)
+
 - Menghandle HTTP requests dan responses
 - Memanggil fungsi dari Models
 - Menangani error dan mengirim status codes
@@ -57,6 +60,7 @@ export async function create(data) {
 - **Tidak** mengakses database secara langsung
 
 **Example:**
+
 ```javascript
 // flightPlanController.js
 export async function create(req, res) {
@@ -73,12 +77,14 @@ export async function create(req, res) {
 ```
 
 ### 3. **Routes** (`src/routes/`)
+
 - Mendefinisikan endpoint URLs
 - Mapping URLs ke controller functions
 - Grouping related endpoints
 - **Tidak** menghandle business logic
 
 **Example:**
+
 ```javascript
 // flightPlans.js
 router.get("/", FlightPlanController.getAll);
@@ -87,6 +93,7 @@ router.put("/:id", FlightPlanController.update);
 ```
 
 ### 4. **Database Layer** (`src/db.js`)
+
 - Raw database operations (SQL queries)
 - Database initialization
 - Connection management
@@ -119,25 +126,30 @@ SQLite Database
 ## Benefits of This Structure
 
 ### ✅ **Separation of Concerns**
+
 - Setiap layer punya tanggung jawab yang jelas
 - Mudah dimodifikasi tanpa mempengaruhi layer lain
 
 ### ✅ **Testability**
+
 - Controllers bisa ditest dengan mock models
 - Models bisa ditest dengan mock database
 - Unit tests lebih mudah dibuat
 
 ### ✅ **Scalability**
+
 - Mudah menambah endpoint baru
 - Mudah menambah business logic
 - Struktur konsisten untuk semua features
 
 ### ✅ **Maintainability**
+
 - Code terorganisir dan mudah dibaca
 - Mudah mencari dan memperbaiki bugs
 - Onboarding developer baru lebih cepat
 
 ### ✅ **Reusability**
+
 - Model functions bisa dipanggil dari controller mana saja
 - Business logic tidak terduplikasi
 
@@ -146,6 +158,7 @@ SQLite Database
 ## How to Add New Feature
 
 ### 1. Create Model (`src/models/newFeatureModel.js`)
+
 ```javascript
 import { dbFunction } from "../db.js";
 
@@ -161,6 +174,7 @@ export async function create(data) {
 ```
 
 ### 2. Create Controller (`src/controllers/newFeatureController.js`)
+
 ```javascript
 import * as Model from "../models/newFeatureModel.js";
 
@@ -175,6 +189,7 @@ export async function getAll(req, res) {
 ```
 
 ### 3. Create Routes (`src/routes/newFeature.js`)
+
 ```javascript
 import express from "express";
 import * as Controller from "../controllers/newFeatureController.js";
@@ -185,6 +200,7 @@ export default router;
 ```
 
 ### 4. Register in Main Router (`src/routes/index.js`)
+
 ```javascript
 import newFeatureRouter from "./newFeature.js";
 router.use("/new-feature", newFeatureRouter);
@@ -195,6 +211,7 @@ router.use("/new-feature", newFeatureRouter);
 ## Best Practices
 
 ### ✅ DO:
+
 - Keep controllers thin (hanya HTTP handling)
 - Put business logic in models
 - Use async/await consistently
@@ -205,6 +222,7 @@ router.use("/new-feature", newFeatureRouter);
 - Return consistent response formats
 
 ### ❌ DON'T:
+
 - Put business logic in controllers
 - Access database directly from controllers
 - Mix HTTP logic with business logic
@@ -234,27 +252,32 @@ API endpoints: **http://localhost:3000/api**
 ## Next Steps for Improvement
 
 1. **Add Middleware**
+
    - Request validation (express-validator)
    - Authentication (JWT)
    - Rate limiting
    - Request logging
 
 2. **Add Services Layer** (Optional)
+
    - Complex business logic
    - Integration with external APIs
    - Data aggregation
 
 3. **Add Testing**
+
    - Unit tests (Jest/Mocha)
    - Integration tests (Supertest)
    - Test coverage reporting
 
 4. **Add Documentation**
+
    - Swagger/OpenAPI
    - JSDoc
    - Postman collection
 
 5. **Environment Configuration**
+
    - .env files
    - Config management
    - Different environments (dev/prod)

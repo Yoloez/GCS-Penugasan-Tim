@@ -42,11 +42,9 @@ export async function create(req, res) {
     });
   } catch (error) {
     console.error("Error creating flight plan:", error);
-
     if (error.message.includes("required")) {
       return res.status(400).json({ error: error.message });
     }
-
     res.status(500).json({ error: error.message });
   }
 }
