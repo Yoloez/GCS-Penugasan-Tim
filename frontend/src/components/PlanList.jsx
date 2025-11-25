@@ -24,76 +24,65 @@ const PlanList = ({ plans, activePlan, onPlanLoad, onPlanDelete }) => {
 	};
 
 	return (
-		<div className="plan-list-container">
-			<h3>Saved Plans ({plans.length})</h3>
-
-			{plans.length === 0 ? (
-				<p style={{ color: "#666", fontStyle: "italic" }}>No plans saved yet</p>
-			) : (
-				<div className="plan-list">
-					{plans.map((plan) => (
-						<div
-							key={plan.id}
-							className={`plan-item ${
-								activePlan?.id === plan.id ? "active" : ""
-							}`}
-							onClick={() => handlePlanClick(plan)}
-						>
+		<div className="p-10 shadow-none">
+			<div className="bg-red p-4 text-black italic">
+				<h3>Saved Plans ({plans.length})</h3>
+				{plans.length === 0 ? (
+					<p>No plans saved yet</p>
+				) : (
+					<div className="max-h-75 ">
+						{plans.map((plan) => (
 							<div
-								style={{
-									display: "flex",
-									justifyContent: "space-between",
-									alignItems: "start",
-								}}
+								key={plan.id}
+								className={` bg-linear-to-r from-purple-500 to bg-pink-500 cursor-pointer grid ${
+									activePlan?.id === plan.id ? "active" : ""
+								}`}
+								onClick={() => handlePlanClick(plan)}
 							>
-								<div style={{ flex: 1 }}>
-									<strong>{plan.name}</strong>
-									<div style={{ fontSize: "0.8rem", color: "#666" }}>
-										{new Date(plan.createdAt).toLocaleString()}
+								<div className="flex justify-between items-start">
+									<div style={{ flex: 1 }}>
+										<strong>{plan.name}</strong>
+										<div style={{ fontSize: "0.8rem", color: "#ffffff" }}>
+											{new Date(plan.createdAt).toLocaleString()}
+										</div>
+										<div style={{ fontSize: "0.8rem", color: "#ffffff" }}>
+											Type: {plan.data?.type}
+										</div>
 									</div>
-									<div style={{ fontSize: "0.8rem", color: "#888" }}>
-										Type: {plan.data?.type}
+									<div className="flex ml-2px gap-2">
+										<button
+											onClick={(e) => handleExportClick(plan, e)}
+											style={{
+												background: "none",
+												border: "none",
+												color: "#1a73e8",
+												cursor: "pointer",
+												fontSize: "0.8rem",
+											}}
+											title="Export"
+										>
+											⬇️
+										</button>
+										<button
+											onClick={(e) => handleDeleteClick(plan, e)}
+											style={{
+												background: "none",
+												border: "none",
+												color: "#d93025",
+												cursor: "pointer",
+												fontSize: "0.8rem",
+											}}
+											title="Delete"
+										>
+											🗑️
+										</button>
 									</div>
-								</div>
-								<div
-									style={{
-										display: "flex",
-										gap: "0.25rem",
-										marginLeft: "0.5rem",
-									}}
-								>
-									<button
-										onClick={(e) => handleExportClick(plan, e)}
-										style={{
-											background: "none",
-											border: "none",
-											color: "#1a73e8",
-											cursor: "pointer",
-											fontSize: "0.8rem",
-										}}
-										title="Export"
-									>
-										⬇️
-									</button>
-									<button
-										onClick={(e) => handleDeleteClick(plan, e)}
-										style={{
-											background: "none",
-											border: "none",
-											color: "#d93025",
-											cursor: "pointer",
-											fontSize: "0.8rem",
-										}}
-										title="Delete"
-									>
-										🗑️
-									</button>
 								</div>
 							</div>
-						</div>
-					))}
-				</div>
-			)}
+						))}
+					</div>
+				)}
+			</div>
 		</div>
 	);
 };
