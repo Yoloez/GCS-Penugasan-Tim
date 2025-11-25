@@ -252,7 +252,7 @@ const MapComponent = () => {
           minWidth: "220px",
         }}
       >
-        <h3 style={{ margin: "0 0 15px 0" }}>📋 Control Panel</h3>
+        <h3 style={{ margin: "0 0 15px 0" }}>Control Panel</h3>
 
         <div style={{ marginBottom: "10px" }}>
           {isRecording ? (
@@ -287,7 +287,7 @@ const MapComponent = () => {
                 fontSize: "14px",
               }}
             >
-              ⏺ Start Recording
+              Start Recording
             </button>
           )}
         </div>
