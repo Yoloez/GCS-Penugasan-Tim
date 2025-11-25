@@ -6,7 +6,7 @@ import { savePlanToFile } from "../../utils/fileHandler";
 import { createPlan, getPlans, deletePlan as apiDeletePlan } from "../../services/api";
 
 const PlanningPageEnhanced = () => {
-  const [mapType, setMapType] = useState("normal");
+  const [mapType, setMapType] = useState("satellite");
   const [drawingMode, setDrawingMode] = useState(null);
   const [plans, setPlans] = useState([]);
   const [activePlan, setActivePlan] = useState(null);
@@ -187,154 +187,43 @@ const PlanningPageEnhanced = () => {
 
       {/* Loading Indicator */}
       {isLoading && (
-        <div
-          style={{
-            position: "fixed",
-            top: "20px",
-            left: "50%",
-            transform: "translateX(-50%)",
-            zIndex: 2001,
-            background: "rgba(26, 115, 235, 0.9)",
-            color: "white",
-            padding: "0.75rem 1.5rem",
-            borderRadius: "8px",
-            boxShadow: "0 2px 10px rgba(0, 0, 0, 0.3)",
-            display: "flex",
-            alignItems: "center",
-            gap: "0.5rem",
-          }}
-        >
-          <div
-            style={{
-              width: "16px",
-              height: "16px",
-              border: "2px solid white",
-              borderTopColor: "transparent",
-              borderRadius: "50%",
-              animation: "spin 0.8s linear infinite",
-            }}
-          />
+        <div className="fixed top-5 left-1/2 -translate-x-1/2 z-2001 bg-blue-600/90 text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-2">
+          <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
           <span>Processing...</span>
         </div>
       )}
 
       {/* Error Message */}
       {error && (
-        <div
-          style={{
-            position: "fixed",
-            top: "20px",
-            left: "50%",
-            transform: "translateX(-50%)",
-            zIndex: 2001,
-            background: "rgba(220, 38, 38, 0.95)",
-            color: "white",
-            padding: "0.75rem 1.5rem",
-            borderRadius: "8px",
-            boxShadow: "0 2px 10px rgba(0, 0, 0, 0.3)",
-            display: "flex",
-            alignItems: "center",
-            gap: "0.5rem",
-            maxWidth: "400px",
-          }}
-        >
+        <div className="fixed top-5 left-1/2 -translate-x-1/2 z-2001 bg-red-600/95 text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-2 max-w-md">
           <span>⚠️ {error}</span>
-          <button
-            onClick={() => setError(null)}
-            style={{
-              marginLeft: "1rem",
-              background: "transparent",
-              border: "1px solid white",
-              color: "white",
-              padding: "0.25rem 0.75rem",
-              borderRadius: "4px",
-              cursor: "pointer",
-              fontSize: "0.85rem",
-            }}
-          >
+          <button onClick={() => setError(null)} className="ml-4 bg-transparent border border-white text-white px-3 py-1 rounded cursor-pointer text-sm hover:bg-white/10 transition-colors">
             Dismiss
           </button>
         </div>
       )}
 
       {showNameDialog && (
-        <div
-          style={{
-            position: "fixed",
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            background: "rgba(0, 0, 0, 0.5)",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            zIndex: 2000,
-          }}
-        >
-          <div
-            style={{
-              background: "white",
-              borderRadius: "8px",
-              padding: "2rem",
-              minWidth: "300px",
-              boxShadow: "0 4px 20px rgba(0, 0, 0, 0.3)",
-            }}
-          >
-            <h2 style={{ marginTop: 0, marginBottom: "1rem", color: "#1a73eb" }}>Name Your Plan</h2>
+        <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-2000">
+          <div className="bg-white rounded-lg p-8 min-w-[300px] shadow-2xl">
+            <h2 className="mt-0 mb-4 text-blue-600 text-xl font-semibold">Name Your Plan</h2>
             <input
               type="text"
               value={planName}
               onChange={(e) => setPlanName(e.target.value)}
               placeholder="Enter plan name..."
-              style={{
-                width: "100%",
-                padding: "0.75rem",
-                border: "1px solid #ddd",
-                borderRadius: "4px",
-                marginBottom: "1.5rem",
-                fontSize: "1rem",
-                boxSizing: "border-box",
-              }}
+              className="w-full px-3 py-3 border border-gray-300 rounded mb-6 text-base focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               onKeyDown={(e) => {
                 if (e.key === "Enter") handleConfirmPlanName();
                 if (e.key === "Escape") handleCancelNameDialog();
               }}
               autoFocus
             />
-            <div
-              style={{
-                display: "flex",
-                gap: "0.5rem",
-                justifyContent: "flex-end",
-              }}
-            >
-              <button
-                onClick={handleCancelNameDialog}
-                style={{
-                  padding: "0.5rem 1rem",
-                  border: "1px solid #ddd",
-                  borderRadius: "4px",
-                  background: "#f5f5f5",
-                  cursor: "pointer",
-                  fontSize: "0.9rem",
-                }}
-              >
+            <div className="flex gap-2 justify-end">
+              <button onClick={handleCancelNameDialog} className="px-4 py-2 border border-gray-300 rounded bg-gray-100 cursor-pointer text-sm hover:bg-gray-200 transition-colors">
                 Cancel
               </button>
-              <button
-                onClick={handleConfirmPlanName}
-                style={{
-                  padding: "0.5rem 1rem",
-                  border: "none",
-                  borderRadius: "4px",
-                  background: "#1a73eb",
-                  color: "white",
-                  cursor: "pointer",
-                  fontSize: "0.9rem",
-                  fontWeight: "500",
-                }}
-              >
+              <button onClick={handleConfirmPlanName} className="px-4 py-2 border-none rounded bg-blue-600 text-white cursor-pointer text-sm font-medium hover:bg-blue-700 transition-colors">
                 Save Plan
               </button>
             </div>
@@ -342,21 +231,7 @@ const PlanningPageEnhanced = () => {
         </div>
       )}
 
-      <div
-        style={{
-          position: "absolute",
-          top: "20px",
-          right: "20px",
-          zIndex: 1000,
-          background: "white",
-          borderRadius: "8px",
-          padding: "1rem",
-          minWidth: "250px",
-          maxHeight: "500px",
-          boxShadow: "0 2px 10px rgba(0, 0, 0, 0.3)",
-          overflowY: "auto",
-        }}
-      >
+      <div className="absolute top-5 right-5 z-1000 bg-white rounded-lg p-4 min-w-[250px] max-h-[500px] shadow-lg overflow-y-auto">
         <PlanList plans={plans} activePlan={activePlan} onPlanLoad={handlePlanLoad} onPlanDelete={handlePlanDelete} />
       </div>
     </div>
