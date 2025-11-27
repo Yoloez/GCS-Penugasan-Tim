@@ -1,29 +1,33 @@
 @import "tailwindcss";
 
+@theme {
+  --z-1000: 1000;
+  --z-2000: 2000;
+  --z-2001: 2001;
+}
+
 body {
-	margin: 0;
-	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
-		"Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
-		sans-serif;
-	-webkit-font-smoothing: antialiased;
-	-moz-osx-font-smoothing: grayscale;
-	height: 100vh;
-	overflow: hidden;
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  height: 100vh;
+  overflow: hidden;
 }
 
 #root {
-	height: 100%;
+  height: 100%;
 }
 
 /* Leaflet marker fix */
 .leaflet-div-icon {
-	background: transparent !important;
-	border: none !important;
+  background: transparent !important;
+  border: none !important;
 }
 
 .leaflet-marker-icon {
-	margin-left: -12px !important;
-	margin-top: -41px !important;
+  margin-left: -12px !important;
+  margin-top: -41px !important;
 }
 
 @import "tailwindcss";

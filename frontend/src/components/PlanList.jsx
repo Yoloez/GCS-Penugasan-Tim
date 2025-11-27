@@ -8,90 +8,79 @@ import { TbGeometry } from "react-icons/tb";
 import { PiDownloadBold } from "react-icons/pi";
 import { BsTrash3 } from "react-icons/bs";
 
-const PlanList = ({
-	plans,
-	activePlan,
-	onPlanLoad,
-	onPlanDelete,
-	onPlanUpdate,
-	onPlanEditGeometry,
-}) => {
-	const [isOpen, setIsOpen] = useState(false);
-	const [editingPlan, setEditingPlan] = useState(null);
-	const [editName, setEditName] = useState("");
-	const [editDescription, setEditDescription] = useState("");
-	const [isUpdating, setIsUpdating] = useState(false);
+const PlanList = ({ plans, activePlan, onPlanLoad, onPlanDelete, onPlanUpdate, onPlanEditGeometry }) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [editingPlan, setEditingPlan] = useState(null);
+  const [editName, setEditName] = useState("");
+  const [editDescription, setEditDescription] = useState("");
+  const [isUpdating, setIsUpdating] = useState(false);
 
-	const handlePlanClick = (plan) => {
-		onPlanLoad(plan.id);
-	};
+  const handlePlanClick = (plan) => {
+    onPlanLoad(plan.id);
+  };
 
-	const handleDeleteClick = (plan, e) => {
-		e.stopPropagation();
-		if (window.confirm(`Delete plan "${plan.name}"?`)) {
-			onPlanDelete(plan.id);
-		}
-	};
+  const handleDeleteClick = (plan, e) => {
+    e.stopPropagation();
+    if (window.confirm(`Delete plan "${plan.name}"?`)) {
+      onPlanDelete(plan.id);
+    }
+  };
 
-	const handleEditClick = (plan, e) => {
-		e.stopPropagation();
-		setEditingPlan(plan);
-		setEditName(plan.name);
-		setEditDescription(plan.description || "");
-	};
+  const handleEditClick = (plan, e) => {
+    e.stopPropagation();
+    setEditingPlan(plan);
+    setEditName(plan.name);
+    setEditDescription(plan.description || "");
+  };
 
-	const handleEditGeometryClick = (plan, e) => {
-		e.stopPropagation();
-		if (
-			window.confirm(
-				`Enable editing mode for "${plan.name}"? You can modify the geometry on the map.`
-			)
-		) {
-			onPlanEditGeometry(plan);
-		}
-	};
+  const handleEditGeometryClick = (plan, e) => {
+    e.stopPropagation();
+    if (window.confirm(`Enable editing mode for "${plan.name}"? You can modify the geometry on the map.`)) {
+      onPlanEditGeometry(plan);
+    }
+  };
 
-	const handleCancelEdit = () => {
-		setEditingPlan(null);
-		setEditName("");
-		setEditDescription("");
-	};
+  const handleCancelEdit = () => {
+    setEditingPlan(null);
+    setEditName("");
+    setEditDescription("");
+  };
 
-	const handleConfirmEdit = async () => {
-		if (!editName.trim()) {
-			alert("Plan name cannot be empty!");
-			return;
-		}
+  const handleConfirmEdit = async () => {
+    if (!editName.trim()) {
+      alert("Plan name cannot be empty!");
+      return;
+    }
 
-		try {
-			setIsUpdating(true);
+    try {
+      setIsUpdating(true);
 
-			const updatedData = {
-				name: editName.trim(),
-				description: editDescription.trim(),
-				waypoints: editingPlan.data.points,
-			};
+      const updatedData = {
+        name: editName.trim(),
+        description: editDescription.trim(),
+        waypoints: editingPlan.data.points,
+      };
 
-			await onPlanUpdate(editingPlan.id, updatedData);
-			handleCancelEdit();
-			alert("✅ Plan updated successfully!");
-		} catch (error) {
-			console.error("Failed to update plan:", error);
-			alert("❌ Failed to update plan. Please try again.");
-		} finally {
-			setIsUpdating(false);
-		}
-	};
+      await onPlanUpdate(editingPlan.id, updatedData);
+      handleCancelEdit();
+      alert("✅ Plan updated successfully!");
+    } catch (error) {
+      console.error("Failed to update plan:", error);
+      alert("❌ Failed to update plan. Please try again.");
+    } finally {
+      setIsUpdating(false);
+    }
+  };
 
-	const handleExportClick = (plan, e) => {
-		e.stopPropagation();
-		const dataStr = JSON.stringify(plan, null, 2);
-		const dataBlob = new Blob([dataStr], { type: "application/json" });
-		const link = document.createElement("a");
-		link.href = URL.createObjectURL(dataBlob);
-		link.download = `${plan.name.replace(/\s+/g, "_")}.json`;
-		link.click();
-	};
+  const handleExportClick = (plan, e) => {
+    e.stopPropagation();
+    const dataStr = JSON.stringify(plan, null, 2);
+    const dataBlob = new Blob([dataStr], { type: "application/json" });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(dataBlob);
+    link.download = `${plan.name.replace(/\s+/g, "_")}.json`;
+    link.click();
+  };
 
 	return (
 		<>
@@ -109,30 +98,19 @@ const PlanList = ({
 				)}
 			</button>
 
-			{/* Overlay */}
-			{isOpen && (
-				<div
-					className="fixed inset-0 bg-black/50 z-1000 transition-opacity duration-300"
-					onClick={() => setIsOpen(false)}
-				/>
-			)}
+      {/* Overlay */}
+      {isOpen && <div className="fixed inset-0 bg-black/50 z-1000 transition-opacity duration-300" onClick={() => setIsOpen(false)} />}
 
-			{/* Sidebar Menu */}
-			<div
-				className={`fixed top-0 right-0 h-full w-96 bg-white/10 backdrop-blur-2xl border-l border-white/20 shadow-2xl z-1001 transform transition-transform duration-300 ease-out ${
-					isOpen ? "translate-x-0" : "translate-x-full"
-				}`}
-			>
-				<div className="h-full flex flex-col">
-					{/* Header */}
-					<div className="p-6 border-b border-white/20">
-						<h3 className="text-2xl font-bold text-white m-0">
-							Saved Plans
-							<span className="ml-2 text-lg text-white/60">
-								({plans.length})
-							</span>
-						</h3>
-					</div>
+      {/* Sidebar Menu */}
+      <div className={`fixed top-0 right-0 h-full w-96 bg-white/10 backdrop-blur-2xl border-l border-white/20 shadow-2xl z-1001 transform transition-transform duration-300 ease-out ${isOpen ? "translate-x-0" : "translate-x-full"}`}>
+        <div className="h-full flex flex-col">
+          {/* Header */}
+          <div className="p-6 border-b border-white/20">
+            <h3 className="text-2xl font-bold text-white m-0">
+              Saved Plans
+              <span className="ml-2 text-lg text-white/60">({plans.length})</span>
+            </h3>
+          </div>
 
 					{/* Plans List */}
 					<div className="flex-1 overflow-y-auto p-4 bg-transparent">
@@ -230,19 +208,17 @@ const PlanList = ({
 							Edit Plan
 						</h2>
 
-						<div className="mb-4">
-							<label className="block text-sm font-medium text-gray-700 mb-2">
-								Plan Name
-							</label>
-							<input
-								type="text"
-								value={editName}
-								onChange={(e) => setEditName(e.target.value)}
-								placeholder="Enter plan name..."
-								className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-								disabled={isUpdating}
-							/>
-						</div>
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700 mb-2">Plan Name</label>
+              <input
+                type="text"
+                value={editName}
+                onChange={(e) => setEditName(e.target.value)}
+                placeholder="Enter plan name..."
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                disabled={isUpdating}
+              />
+            </div>
 
 						<div className="mb-6">
 							<label className="block text-sm font-medium text-gray-700 mb-2">
@@ -263,30 +239,24 @@ const PlanList = ({
 							dialog and use the <TbGeometry /> button.
 						</div>
 
-						<div className="flex gap-2 justify-end">
-							<button
-								onClick={handleCancelEdit}
-								className="px-4 py-2 border border-gray-300 rounded-lg bg-gray-100 cursor-pointer text-sm hover:bg-gray-200 transition-colors"
-								disabled={isUpdating}
-							>
-								Cancel
-							</button>
-							<button
-								onClick={handleConfirmEdit}
-								className="px-4 py-2 border-none rounded-lg bg-blue-600 text-white cursor-pointer text-sm font-medium hover:bg-blue-700 transition-colors flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-								disabled={isUpdating}
-							>
-								{isUpdating && (
-									<div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-								)}
-								{isUpdating ? "Updating..." : "Update Plan"}
-							</button>
-						</div>
-					</div>
-				</div>
-			)}
-		</>
-	);
+            <div className="flex gap-2 justify-end">
+              <button onClick={handleCancelEdit} className="px-4 py-2 border border-gray-300 rounded-lg bg-gray-100 cursor-pointer text-sm hover:bg-gray-200 transition-colors" disabled={isUpdating}>
+                Cancel
+              </button>
+              <button
+                onClick={handleConfirmEdit}
+                className="px-4 py-2 border-none rounded-lg bg-blue-600 text-white cursor-pointer text-sm font-medium hover:bg-blue-700 transition-colors flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                disabled={isUpdating}
+              >
+                {isUpdating && <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />}
+                {isUpdating ? "Updating..." : "Update Plan"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
+  );
 };
 
 export default PlanList;
