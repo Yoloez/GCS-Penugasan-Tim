@@ -9,14 +9,14 @@ import { useMap } from "react-leaflet";
  * @param {boolean} props.isRecording - Recording state
  * @param {Array} props.trajectory - Current trajectory points
  * @param {Function} props.setTrajectory - Function to update trajectory
+ * @param {number} props.speed - Movement speed multiplier
  */
-const MapController = ({ uavPosition, setUavPosition, isRecording, trajectory, setTrajectory }) => {
+const MapController = ({ uavPosition, setUavPosition, isRecording, trajectory, setTrajectory, speed }) => {
   const map = useMap();
-  const speed = 0.00001;
   const [keysPressed, setKeysPressed] = useState({});
 
   useEffect(() => {
-    map.setView(uavPosition, 18);
+    map.setView(uavPosition, map.getZoom());
   }, [uavPosition, map]);
 
   useEffect(() => {
@@ -64,10 +64,10 @@ const MapController = ({ uavPosition, setUavPosition, isRecording, trajectory, s
           setTrajectory((prev) => [...prev, newPosition]);
         }
       }
-    }, 5);
+    }, 1);
 
     return () => clearInterval(interval);
-  }, [keysPressed, uavPosition, setUavPosition, isRecording, setTrajectory]);
+  }, [keysPressed, uavPosition, setUavPosition, isRecording, setTrajectory, speed]);
 
   return null;
 };
