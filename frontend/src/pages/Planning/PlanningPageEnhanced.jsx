@@ -205,7 +205,7 @@ const PlanningPageEnhanced = () => {
 
       {showNameDialog && (
         <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-2000">
-          <div className="bg-white rounded-lg p-8 min-w-[300px] shadow-2xl">
+          <div className="bg-green-300 rounded-lg px-4 min-w-[300px] shadow-2xl">
             <h2 className="mt-0 mb-4 text-blue-600 text-xl font-semibold">Name Your Plan</h2>
             <input
               type="text"

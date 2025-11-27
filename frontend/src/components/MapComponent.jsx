@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { MapContainer, TileLayer, Marker, Popup, useMap, Polyline, LayersControl, Circle } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
+import { saveTrajectory, getTrajectories, deleteTrajectory } from "../services/api";
 
 // Precise UAV icon dengan detail yang lebih akurat
 const createPreciseUAVIcon = () => {
@@ -63,7 +64,7 @@ const createPreciseUAVIcon = () => {
   return L.icon({
     iconUrl: iconUrl,
     iconSize: [48, 48],
-    iconAnchor: [24, 24], // Center point - exact GPS position
+    iconAnchor: [24, 24], 
     popupAnchor: [0, -24],
     className: "precise-uav-icon",
   });
@@ -140,23 +141,133 @@ const MapComponent = () => {
   const [trajectory, setTrajectory] = useState([]);
   const [recordedTrajectories, setRecordedTrajectories] = useState([]);
   const [showPrecisionCircle, setShowPrecisionCircle] = useState(true);
+  const [recordingStartTime, setRecordingStartTime] = useState(null);
+  const [isSaving, setIsSaving] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
+  // Load saved trajectories from database on mount
+  useEffect(() => {
+    loadTrajectoriesFromDB();
+  }, []);
+
+  const loadTrajectoriesFromDB = async () => {
+    try {
+      setIsLoading(true);
+      const trajectories = await getTrajectories();
+      // Transform database format to component format
+      const formattedTrajectories = trajectories.map((t) => ({
+        id: t.id,
+        name: t.name,
+        points: t.points,
+        duration: t.duration,
+        distance: t.distance,
+        created_at: t.created_at,
+      }));
+      setRecordedTrajectories(formattedTrajectories);
+    } catch (error) {
+      console.error("Failed to load trajectories:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const calculateDistance = (points) => {
+    if (points.length < 2) return 0;
+    let totalDistance = 0;
+    for (let i = 1; i < points.length; i++) {
+      const [lat1, lng1] = points[i - 1];
+      const [lat2, lng2] = points[i];
+      // Haversine formula for distance in meters
+      const R = 6371000; // Earth radius in meters
+      const dLat = ((lat2 - lat1) * Math.PI) / 180;
+      const dLng = ((lng2 - lng1) * Math.PI) / 180;
+      const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.cos((lat1 * Math.PI) / 180) * Math.cos((lat2 * Math.PI) / 180) * Math.sin(dLng / 2) * Math.sin(dLng / 2);
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+      totalDistance += R * c;
+    }
+    return totalDistance;
+  };
 
   const handleStartRecord = () => {
     setIsRecording(true);
     setTrajectory([uavPosition]);
+    setRecordingStartTime(Date.now());
   };
 
-  const handleStopRecord = () => {
+  const handleStopRecord = async () => {
     setIsRecording(false);
+
     if (trajectory.length > 1) {
-      setRecordedTrajectories([...recordedTrajectories, trajectory]);
+      const duration = (Date.now() - recordingStartTime) / 1000; // seconds
+      const distance = calculateDistance(trajectory);
+      const trajectoryName = `Simulation_${new Date().toLocaleString()}`;
+
+      try {
+        setIsSaving(true);
+        // Save to database
+        const savedTrajectory = await saveTrajectory({
+          name: trajectoryName,
+          points: trajectory,
+          duration: Math.round(duration),
+          distance: Math.round(distance),
+        });
+
+        // Add to local state with database ID
+        setRecordedTrajectories([
+          ...recordedTrajectories,
+          {
+            id: savedTrajectory.id,
+            name: trajectoryName,
+            points: trajectory,
+            duration: Math.round(duration),
+            distance: Math.round(distance),
+            created_at: new Date().toISOString(),
+          },
+        ]);
+
+        alert(`✅ Trajectory saved!\nDuration: ${Math.round(duration)}s\nDistance: ${Math.round(distance)}m`);
+      } catch (error) {
+        console.error("Failed to save trajectory:", error);
+        alert("❌ Failed to save trajectory to database");
+      } finally {
+        setIsSaving(false);
+      }
     }
+
     setTrajectory([]);
+    setRecordingStartTime(null);
   };
 
-  const handleClearTrajectory = () => {
-    setRecordedTrajectories([]);
-    setTrajectory([]);
+  const handleClearTrajectory = async () => {
+    if (recordedTrajectories.length === 0) return;
+
+    if (window.confirm(`Delete all ${recordedTrajectories.length} saved trajectories?`)) {
+      try {
+        setIsLoading(true);
+        // Delete all trajectories from database
+        await Promise.all(recordedTrajectories.map((traj) => (traj.id ? deleteTrajectory(traj.id) : Promise.resolve())));
+
+        setRecordedTrajectories([]);
+        setTrajectory([]);
+        alert("✅ All trajectories cleared!");
+      } catch (error) {
+        console.error("Failed to clear trajectories:", error);
+        alert("❌ Failed to clear some trajectories");
+      } finally {
+        setIsLoading(false);
+      }
+    }
+  };
+
+  const handleDeleteSingleTrajectory = async (trajectoryId) => {
+    try {
+      await deleteTrajectory(trajectoryId);
+      setRecordedTrajectories(recordedTrajectories.filter((t) => t.id !== trajectoryId));
+      alert("✅ Trajectory deleted!");
+    } catch (error) {
+      console.error("Failed to delete trajectory:", error);
+      alert("❌ Failed to delete trajectory");
+    }
   };
 
   return (
@@ -197,7 +308,7 @@ const MapComponent = () => {
 
         {/* Recorded trajectories */}
         {recordedTrajectories.map((traj, idx) => (
-          <Polyline key={idx} positions={traj} color="blue" weight={2} opacity={0.7} />
+          <Polyline key={traj.id || idx} positions={traj.points || traj} color="blue" weight={2} opacity={0.7} />
         ))}
 
         {/* Current trajectory */}
@@ -258,36 +369,38 @@ const MapComponent = () => {
           {isRecording ? (
             <button
               onClick={handleStopRecord}
+              disabled={isSaving}
               style={{
                 width: "100%",
                 padding: "10px",
-                backgroundColor: "#E74C3C",
+                backgroundColor: isSaving ? "#95A5A6" : "#E74C3C",
                 color: "white",
                 border: "none",
                 borderRadius: "4px",
-                cursor: "pointer",
+                cursor: isSaving ? "not-allowed" : "pointer",
                 fontWeight: "bold",
                 fontSize: "14px",
               }}
             >
-              ⏹ Stop Recording
+              {isSaving ? "💾 Saving..." : "⏹ Stop Recording"}
             </button>
           ) : (
             <button
               onClick={handleStartRecord}
+              disabled={isLoading || isSaving}
               style={{
                 width: "100%",
                 padding: "10px",
-                backgroundColor: "#27AE60",
+                backgroundColor: isLoading || isSaving ? "#95A5A6" : "#27AE60",
                 color: "white",
                 border: "none",
                 borderRadius: "4px",
-                cursor: "pointer",
+                cursor: isLoading || isSaving ? "not-allowed" : "pointer",
                 fontWeight: "bold",
                 fontSize: "14px",
               }}
             >
-              Start Recording
+              {isLoading ? "⏳ Loading..." : "▶ Start Recording"}
             </button>
           )}
         </div>
@@ -295,19 +408,20 @@ const MapComponent = () => {
         <div style={{ marginBottom: "10px" }}>
           <button
             onClick={handleClearTrajectory}
+            disabled={recordedTrajectories.length === 0 || isLoading || isSaving}
             style={{
               width: "100%",
               padding: "10px",
-              backgroundColor: "#E67E22",
+              backgroundColor: recordedTrajectories.length === 0 || isLoading || isSaving ? "#BDC3C7" : "#E67E22",
               color: "white",
               border: "none",
               borderRadius: "4px",
-              cursor: "pointer",
+              cursor: recordedTrajectories.length === 0 || isLoading || isSaving ? "not-allowed" : "pointer",
               fontWeight: "bold",
               fontSize: "14px",
             }}
           >
-            🗑️ Clear All Tracks
+            {isLoading ? "⏳ Clearing..." : "🗑️ Clear All Tracks"}
           </button>
         </div>
 
@@ -352,6 +466,67 @@ const MapComponent = () => {
             <strong>GPS Accuracy:</strong> ±2m
           </p>
         </div>
+
+        {/* Saved Trajectories List */}
+        {recordedTrajectories.length > 0 && (
+          <>
+            <hr style={{ margin: "15px 0" }} />
+            <div style={{ marginBottom: "10px" }}>
+              <h4 style={{ margin: "0 0 10px 0", fontSize: "13px", color: "#2C3E50" }}>📊 Saved Trajectories ({recordedTrajectories.length})</h4>
+              <div style={{ maxHeight: "200px", overflowY: "auto", fontSize: "11px" }}>
+                {recordedTrajectories.map((traj, idx) => (
+                  <div
+                    key={traj.id || idx}
+                    style={{
+                      padding: "8px",
+                      marginBottom: "5px",
+                      backgroundColor: "rgba(52, 152, 219, 0.1)",
+                      borderRadius: "4px",
+                      border: "1px solid rgba(52, 152, 219, 0.3)",
+                    }}
+                  >
+                    <p style={{ margin: "2px 0", fontWeight: "bold", color: "#2C3E50" }}>{traj.name || `Trajectory ${idx + 1}`}</p>
+                    <p style={{ margin: "2px 0", color: "#7F8C8D" }}>
+                      📍 Points: {traj.points?.length || 0} | ⏱️ {traj.duration || 0}s | 📏 {traj.distance || 0}m
+                    </p>
+                    {traj.created_at && <p style={{ margin: "2px 0", color: "#95A5A6", fontSize: "10px" }}>🕒 {new Date(traj.created_at).toLocaleString()}</p>}
+                    {traj.id && (
+                      <button
+                        onClick={() => handleDeleteSingleTrajectory(traj.id)}
+                        style={{
+                          marginTop: "5px",
+                          padding: "3px 8px",
+                          backgroundColor: "#E74C3C",
+                          color: "white",
+                          border: "none",
+                          borderRadius: "3px",
+                          cursor: "pointer",
+                          fontSize: "10px",
+                        }}
+                      >
+                        🗑️ Delete
+                      </button>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </>
+        )}
+
+        {isLoading && (
+          <div
+            style={{
+              padding: "8px",
+              backgroundColor: "rgba(52, 152, 219, 0.2)",
+              borderRadius: "4px",
+              textAlign: "center",
+              fontSize: "12px",
+            }}
+          >
+            ⏳ Loading trajectories...
+          </div>
+        )}
       </div>
 
       {/* Info Panel */}
