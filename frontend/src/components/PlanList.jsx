@@ -1,5 +1,12 @@
 import React, { useState } from "react";
 import { FaBars, FaTimes } from "react-icons/fa";
+import { MdDateRange } from "react-icons/md";
+import { FaShapes } from "react-icons/fa6";
+import { GrLocationPin } from "react-icons/gr";
+import { PiPencilSimpleLineBold } from "react-icons/pi";
+import { TbGeometry } from "react-icons/tb";
+import { PiDownloadBold } from "react-icons/pi";
+import { BsTrash3 } from "react-icons/bs";
 
 const PlanList = ({
 	plans,
@@ -91,7 +98,7 @@ const PlanList = ({
 			{/* Hamburger Button */}
 			<button
 				onClick={() => setIsOpen(!isOpen)}
-				className="fixed top-6 right-6 z-1001 bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl p-3 shadow-2xl text-white hover:bg-white/20 transition-all duration-300"
+				className="fixed top-6 right-6 z-1001 bg-black-200/50 backdrop-blur-xl border border-white/20 rounded-2xl p-3 shadow-2xl text-white cursor-pointer hover:bg-white/20 transition-all duration-300"
 				title="Toggle Plans Menu"
 			>
 				{isOpen ? <FaTimes size={24} /> : <FaBars size={24} />}
@@ -128,7 +135,7 @@ const PlanList = ({
 					</div>
 
 					{/* Plans List */}
-					<div className="flex-1 overflow-y-auto p-4">
+					<div className="flex-1 overflow-y-auto p-4 bg-transparent">
 						{plans.length === 0 ? (
 							<div className="flex flex-col items-center justify-center h-full text-center">
 								<div className="text-6xl mb-4">📍</div>
@@ -145,7 +152,7 @@ const PlanList = ({
 								{plans.map((plan) => (
 									<div
 										key={plan.id}
-										className={`bg-white/10 backdrop-blur-lg hover:bg-white/20 cursor-pointer p-4 rounded-2xl border transition-all duration-200 ${
+										className={`bg-white/10 backdrop-blur-lg hover:bg-white/20 cursor-pointer p-4 border transition-all duration-200 ${
 											activePlan?.id === plan.id
 												? "border-blue-400 border-2 shadow-lg shadow-blue-500/20"
 												: "border-white/20 hover:border-white/30"
@@ -153,47 +160,58 @@ const PlanList = ({
 										onClick={() => handlePlanClick(plan)}
 									>
 										<div className="flex justify-between items-start">
-											<div className="flex-1 min-w-0">
+											<div className="flex min-w-0 flex-col gap-4">
 												<strong className="text-white text-base block truncate">
 													{plan.name}
 												</strong>
-												<div className="text-xs text-white/60 mt-2 space-y-1">
-													<div>
-														📅 {new Date(plan.createdAt).toLocaleDateString()}
+												<div className=" text-xm text-white/60 mt-2 space-y-1">
+													<div className="flex flex-row gap-5">
+														<MdDateRange size={16} className="mr-1" />:{" "}
+														{new Date(plan.createdAt).toLocaleDateString()}
 													</div>
-													<div>🔷 Type: {plan.data?.type}</div>
-													<div>📍 Points: {plan.data?.points?.length || 0}</div>
+													<div className="flex flex-row gap-5">
+														<FaShapes size={16} className="mr-1" />:{" "}
+														{plan.data?.type}
+													</div>
+													<div className="flex flex-row gap-5">
+														<GrLocationPin size={16} className="mr-1" />:{" "}
+														{plan.data?.points?.length || 0}
+													</div>
 												</div>
 											</div>
-											<div className="flex flex-col gap-2 ml-3">
-												<button
-													onClick={(e) => handleEditClick(plan, e)}
-													className="bg-white/10 hover:bg-blue-500/80 border-none text-white cursor-pointer text-sm rounded-lg p-2 transition-all hover:scale-110"
-													title="Edit Name & Description"
-												>
-													✏️
-												</button>
-												<button
-													onClick={(e) => handleEditGeometryClick(plan, e)}
-													className="bg-white/10 hover:bg-purple-500/80 border-none text-white cursor-pointer text-sm rounded-lg p-2 transition-all hover:scale-110"
-													title="Edit Geometry"
-												>
-													🗺️
-												</button>
-												<button
-													onClick={(e) => handleExportClick(plan, e)}
-													className="bg-white/10 hover:bg-green-500/80 border-none text-white cursor-pointer text-sm rounded-lg p-2 transition-all hover:scale-110"
-													title="Export"
-												>
-													⬇️
-												</button>
-												<button
-													onClick={(e) => handleDeleteClick(plan, e)}
-													className="bg-white/10 hover:bg-red-500/80 border-none text-white cursor-pointer text-sm rounded-lg p-2 transition-all hover:scale-110"
-													title="Delete"
-												>
-													🗑️
-												</button>
+											<div className=" flex flex-col justify-center items-center gap-10 ml-3 translate-y-4 -translate-x-10 border-solid">
+												<div className="flex flex-row gap-10">
+													<button
+														onClick={(e) => handleEditClick(plan, e)}
+														className="scale-150 bg-white/10 hover:bg-blue-500/80 border-solid text-white cursor-pointer text-sm rounded-lg p-2 transition-all hover:scale-200"
+														title="Edit Name & Description"
+													>
+														<PiPencilSimpleLineBold size={16} />
+													</button>
+													<button
+														onClick={(e) => handleEditGeometryClick(plan, e)}
+														className="scale-150 bg-white/10 hover:bg-purple-500/80 border-solid text-white cursor-pointer text-sm rounded-lg p-2 transition-all hover:scale-200"
+														title="Edit Geometry"
+													>
+														<TbGeometry size={16} />
+													</button>
+												</div>
+												<div className="flex flex-row gap-10">
+													<button
+														onClick={(e) => handleExportClick(plan, e)}
+														className="scale-150 bg-white/10 hover:bg-green-500/80 border-solid text-white cursor-pointer text-sm rounded-lg p-2 transition-all hover:scale-200"
+														title="Download Plan"
+													>
+														<PiDownloadBold size={16} />
+													</button>
+													<button
+														onClick={(e) => handleDeleteClick(plan, e)}
+														className="size-3xl bg-white/10 hover:bg-red-500/80 border-solid text-white cursor-pointer text-sm rounded-lg p-2 transition-all hover:scale-200"
+														title="Delete Plan"
+													>
+														<BsTrash3 size={16} />
+													</button>
+												</div>
 											</div>
 										</div>
 									</div>
@@ -207,7 +225,7 @@ const PlanList = ({
 			{/* Edit Dialog */}
 			{editingPlan && (
 				<div className="fixed inset-0 bg-black/50 flex justify-center items-center z-2000">
-					<div className="bg-white/95 backdrop-blur-xl rounded-2xl p-6 min-w-[400px] shadow-2xl border border-white/20">
+					<div className="bg-white/95 backdrop-blur-xl rounded-2xl p-6 min-w-400px shadow-2xl border border-white/20">
 						<h2 className="mt-0 mb-4 text-blue-600 text-xl font-semibold">
 							Edit Plan
 						</h2>
@@ -228,9 +246,9 @@ const PlanList = ({
 
 						<div className="mb-6">
 							<label className="block text-sm font-medium text-gray-700 mb-2">
-								Description (Optional)
+								Description
 							</label>
-							<textarea
+							<input
 								value={editDescription}
 								onChange={(e) => setEditDescription(e.target.value)}
 								placeholder="Enter description..."
@@ -242,7 +260,7 @@ const PlanList = ({
 
 						<div className="bg-blue-50 p-3 rounded-lg mb-4 text-sm text-gray-700">
 							<strong>Note:</strong> To edit waypoints/geometry, close this
-							dialog and use the 🗺️ button.
+							dialog and use the <TbGeometry /> button.
 						</div>
 
 						<div className="flex gap-2 justify-end">

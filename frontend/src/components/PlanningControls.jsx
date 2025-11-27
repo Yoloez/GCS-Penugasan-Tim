@@ -82,13 +82,13 @@ const PlanningControls = ({
 	];
 
 	return (
-		<div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-1000 gap-3 px-10 py-4">
+		<div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-1000 gap-30">
 			<div
 				ref={dockRef}
 				className="relative bg-linear-to-br from-gray-800/95 to-gray-900/95 backdrop-blur-2xl border border-gray-700/50 rounded-3xl px-4 py-3 shadow-2xl"
 				onMouseLeave={() => setHoveredIndex(null)}
 			>
-				<div className="flex items-end gap-2">
+				<div className="flex items-end gap-2 px-10 py-3">
 					{/* Map Type Buttons */}
 					{mapTools.map((tool, index) => {
 						const Icon = tool.icon;

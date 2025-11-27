@@ -11,7 +11,7 @@ import {
 } from "../../services/api";
 
 const PlanningPageEnhanced = () => {
-	const [mapType, setMapType] = useState("satellite");
+	const [mapType, setMapType] = useState("normal");
 	const [drawingMode, setDrawingMode] = useState(null);
 	const [plans, setPlans] = useState([]);
 	const [activePlan, setActivePlan] = useState(null);
@@ -377,9 +377,9 @@ const PlanningPageEnhanced = () => {
 			)}
 
 			{showNameDialog && (
-				<div className="fixed inset-0 bg-black/50 flex justify-center items-center z-2000">
-					<div className="bg-white rounded-lg p-8 min-w-[300px] shadow-2xl">
-						<h2 className="mt-0 mb-4 text-blue-600 text-xl font-semibold">
+				<div className="fixed inset-0 bg-black/50 flex justify-center items-center z-2000 p-90 font-bold border-none">
+					<div className="bg-white rounded-lg w-5xl h-2xl py-8 shadow-2xl">
+						<h2 className="mt-0 mb-4 text-black text-xl font-semibold">
 							{editingPlanId ? "Confirm Geometry Update" : "Name Your Plan"}
 						</h2>
 
@@ -403,7 +403,7 @@ const PlanningPageEnhanced = () => {
 								value={planName}
 								onChange={(e) => setPlanName(e.target.value)}
 								placeholder="Enter plan name..."
-								className="w-full px-3 py-3 border border-gray-300 rounded mb-6 text-base focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+								className="w-full px-3 py-3  border-2 border-gray-300 rounded mb-6 text-base focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
 								onKeyDown={(e) => {
 									if (e.key === "Enter") handleConfirmPlanName();
 									if (e.key === "Escape") handleCancelNameDialog();
@@ -412,16 +412,16 @@ const PlanningPageEnhanced = () => {
 							/>
 						)}
 
-						<div className="flex gap-2 justify-end">
+						<div className="flex gap-2 justify-between items-center mt-20">
 							<button
 								onClick={handleCancelNameDialog}
-								className="px-4 py-2 border border-gray-300 rounded bg-gray-100 cursor-pointer text-sm hover:bg-gray-200 transition-colors"
+								className="px-8 py-2 border-none rounded-lg border-gray-300 bg-gray-100 cursor-pointer text-sm hover:bg-gray-200 transition-colors"
 							>
 								Cancel
 							</button>
 							<button
 								onClick={handleConfirmPlanName}
-								className="px-4 py-2 border-none rounded bg-blue-600 text-white cursor-pointer text-sm font-medium hover:bg-blue-700 transition-colors"
+								className="px-8 py-2 border-none rounded-lg bg-blue-600 text-white cursor-pointer text-sm font-medium hover:bg-blue-700 transition-colors"
 							>
 								{editingPlanId ? "Update Geometry" : "Save Plan"}
 							</button>

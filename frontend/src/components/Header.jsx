@@ -8,14 +8,14 @@ const Header = () => {
 	const isActive = (path) => location.pathname === path;
 
 	return (
-		<header className="w-full bg-linear-to-r from-slate-900 via-purple-900 to-slate-900 shadow-lg">
+		<header className="w-full top-0 left-150 mx-auto bg-linear-to-r from-slate-500 via-gray-900 to-slate-900 shadow-lg px-5 py-4">
 			<div className="max-w mx-4 px-8 sm:px-6 lg:px-8 ">
-				<div className="flex items-center justify-between h-16 mx-4">
+				<div className="flex items-center justify-center h-16 mx-4">
 					{/* Logo/Brand */}
 					<div className="shrink-0">
 						<div className="flex items-center space-x-2">
 							<span className="text-white font-bold text-xl hidden sm:block">
-								Ground Control System Simulator
+								Ground Control Station
 							</span>
 						</div>
 					</div>
@@ -56,7 +56,7 @@ const Header = () => {
 									: "text-gray-300 hover:text-white hover:bg-white/10"
 							}`}
 						>
-							<div className="flex items-center space-x-2">
+							<div className="flex items-center justify-items-center ">
 								<svg
 									className="w-5 h-5"
 									fill="none"
