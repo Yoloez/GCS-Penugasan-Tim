@@ -1,11 +1,13 @@
 # Simulation Trajectory Database Integration
 
 ## 🎯 Overview
+
 Successfully integrated database persistence for UAV simulation trajectories in MapComponent. Users can now record, save, and manage simulation trajectories with full database support.
 
 ## ✨ New Features
 
 ### 1. **Automatic Trajectory Saving**
+
 - Trajectories are automatically saved to database when recording stops
 - Each trajectory includes:
   - **Name**: Auto-generated with timestamp (e.g., "Simulation_11/25/2025, 2:16:22 PM")
@@ -15,6 +17,7 @@ Successfully integrated database persistence for UAV simulation trajectories in 
   - **Created At**: Timestamp of when trajectory was saved
 
 ### 2. **Trajectory List Management**
+
 - Visual list of all saved trajectories in control panel
 - Each trajectory card displays:
   - 📍 Number of GPS points recorded
@@ -24,11 +27,13 @@ Successfully integrated database persistence for UAV simulation trajectories in 
   - 🗑️ Individual delete button
 
 ### 3. **Persistent Storage**
+
 - All trajectories automatically loaded from database on component mount
 - Trajectories persist across page refreshes and browser sessions
 - Full CRUD operations: Create, Read, Delete
 
 ### 4. **Enhanced UI/UX**
+
 - Loading states for database operations
 - Saving indicator when stopping recording
 - Disabled buttons during async operations
@@ -36,6 +41,7 @@ Successfully integrated database persistence for UAV simulation trajectories in 
 - Success/error alerts with detailed feedback
 
 ### 5. **Distance Calculation**
+
 - Implemented Haversine formula for accurate GPS distance calculation
 - Accounts for Earth's curvature
 - Result in meters for precision
@@ -43,6 +49,7 @@ Successfully integrated database persistence for UAV simulation trajectories in 
 ## 🔧 Technical Implementation
 
 ### Modified Files
+
 - **`frontend/src/components/MapComponent.jsx`**
   - Added trajectory API imports
   - Implemented `loadTrajectoriesFromDB()` function
@@ -55,13 +62,17 @@ Successfully integrated database persistence for UAV simulation trajectories in 
   - Added trajectory list UI in control panel
 
 ### API Integration
+
 Using existing endpoints from `frontend/src/services/api.js`:
+
 - `saveTrajectory(trajectory)` - POST /api/trajectories
 - `getTrajectories()` - GET /api/trajectories
 - `deleteTrajectory(id)` - DELETE /api/trajectories/:id
 
 ### Database Schema
+
 Table: `trajectories`
+
 ```sql
 id INTEGER PRIMARY KEY AUTOINCREMENT
 name TEXT NOT NULL
@@ -74,6 +85,7 @@ created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 ## 📊 Data Flow
 
 ### Save Trajectory Flow:
+
 1. User clicks "Start Recording" → `recordingStartTime` set
 2. UAV moves, positions recorded in `trajectory` state
 3. User clicks "Stop Recording" → `handleStopRecord()` triggered
@@ -86,6 +98,7 @@ created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 10. Show success alert with metrics
 
 ### Load Trajectories Flow:
+
 1. Component mounts → `useEffect` triggers
 2. Call `loadTrajectoriesFromDB()`
 3. Fetch all trajectories from backend API
@@ -94,6 +107,7 @@ created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 6. Trajectories displayed on map and in list
 
 ### Delete Flow:
+
 1. User clicks individual delete button
 2. Call `deleteTrajectory(id)` API
 3. Backend removes from SQLite database
@@ -103,6 +117,7 @@ created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 ## 🎨 UI Components
 
 ### Control Panel Status Display:
+
 ```
 Status: 🔴 Recording / ⚪ Idle
 Saved Tracks: [count]
@@ -111,6 +126,7 @@ GPS Accuracy: ±2m
 ```
 
 ### Trajectory List (scrollable, max-height: 200px):
+
 ```
 📊 Saved Trajectories (3)
 ┌──────────────────────────────────┐
@@ -122,19 +138,19 @@ GPS Accuracy: ±2m
 ```
 
 ### Button States:
+
 - **Start Recording**: Green (enabled) / Gray (disabled when loading)
 - **Stop Recording**: Red (enabled) / Gray (disabled when saving)
 - **Clear All Tracks**: Orange (enabled) / Gray (disabled when empty or processing)
 
 ## 🔍 Haversine Distance Formula
+
 ```javascript
 // Calculate distance between two GPS coordinates
 const R = 6371000; // Earth radius in meters
-const dLat = (lat2 - lat1) * Math.PI / 180;
-const dLng = (lng2 - lng1) * Math.PI / 180;
-const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-  Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
-  Math.sin(dLng / 2) * Math.sin(dLng / 2);
+const dLat = ((lat2 - lat1) * Math.PI) / 180;
+const dLng = ((lng2 - lng1) * Math.PI) / 180;
+const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.cos((lat1 * Math.PI) / 180) * Math.cos((lat2 * Math.PI) / 180) * Math.sin(dLng / 2) * Math.sin(dLng / 2);
 const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 const distance = R * c; // meters
 ```
@@ -156,26 +172,31 @@ const distance = R * c; // meters
 ## 🚀 Usage Instructions
 
 1. **Start Simulation**:
+
    - Use WASD or Arrow keys to move UAV
    - Click "▶ Start Recording" to begin trajectory capture
 
 2. **Record Trajectory**:
+
    - Move UAV around the map
    - Current points count updates in status panel
    - Red polyline shows live trajectory
 
 3. **Stop & Save**:
+
    - Click "⏹ Stop Recording"
    - Button shows "💾 Saving..." during database save
    - Success alert displays duration and distance metrics
    - Trajectory automatically added to "Saved Trajectories" list
 
 4. **View Saved Trajectories**:
+
    - All trajectories displayed as blue polylines on map
    - Scroll through list in control panel
    - View metadata (points, duration, distance, timestamp)
 
 5. **Delete Trajectory**:
+
    - Click "🗑️ Delete" button on individual trajectory card
    - Confirmation alert appears
    - Trajectory removed from database and map

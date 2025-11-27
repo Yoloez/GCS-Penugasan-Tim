@@ -4,7 +4,7 @@ import { openDb } from "./src/db.js";
 import apiRoutes from "./src/routes/index.js";
 
 const app = express();
-const port = 5000;
+const port = 4000;
 
 // Middleware
 app.use(cors());
