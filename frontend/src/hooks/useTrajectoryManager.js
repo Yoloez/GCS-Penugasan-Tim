@@ -14,7 +14,7 @@ export const useTrajectoryManager = () => {
   // Load trajectories from database on mount
   useEffect(() => {
     loadTrajectoriesFromDB();
-  }, []);
+  }, []); 
 
   const loadTrajectoriesFromDB = async () => {
     try {
