@@ -9,7 +9,7 @@ import {
 	Circle,
 } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
-import useKeyboardNavigation from "../hooks/useKeyboardNavigation";
+import useKeyboardNavigation from "../../hooks/useKeyboardNavigation";
 
 const MapEvents = ({ drawingMode, onPlanSave, onDrawingCancel }) => {
 	const [points, setPoints] = useState([]);
@@ -260,7 +260,7 @@ const MapEvents = ({ drawingMode, onPlanSave, onDrawingCancel }) => {
 	return <>{renderCurrentDrawing()}</>;
 };
 
-const MapComponent = ({
+const MapPlanning = ({
 	mapType,
 	drawingMode,
 	activePlan,
@@ -280,9 +280,10 @@ const MapComponent = ({
 		if (mapType === "satellite") {
 			return (
 				<TileLayer
-					url="https://{s}.google.com/vt/lyrs/=s&x={x}&y={y}&z={z}"
+					url="https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}"
 					subdomains={["mt0", "mt1", "mt2", "mt3"]}
 					attribution="&copy; Google"
+					maxZoom={20}
 				/>
 			);
 		} else {
@@ -290,6 +291,7 @@ const MapComponent = ({
 				<TileLayer
 					url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
 					attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+					maxZoom={19}
 				/>
 			);
 		}
@@ -348,4 +350,4 @@ const MapComponent = ({
 	);
 };
 
-export default MapComponent;
+export default MapPlanning;

@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useEffect } from "react";
-import MapComponent from "../../components/MapPlanning";
-import PlanningControls from "../../components/PlanningControls";
-import PlanList from "../../components/PlanList";
+import MapPlanning from "../../components/Planning/MapPlanning";
+import PlanningControls from "../../components/Planning/PlanningControls";
+import PlanList from "../../components/Planning/PlanList";
 import { savePlanToFile } from "../../utils/fileHandler";
 import {
 	createPlan,
@@ -310,7 +310,7 @@ const PlanningPageEnhanced = () => {
 
 	return (
 		<div className="planning-container">
-			<MapComponent
+			<MapPlanning
 				mapType={mapType}
 				drawingMode={drawingMode}
 				activePlan={activePlan}
@@ -372,16 +372,16 @@ const PlanningPageEnhanced = () => {
 
 			{showNameDialog && (
 				<div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex justify-center items-center z-2000">
-					<div className="bg-white/75 rounded-xl shadow-2xl w-full max-w-md mx-4 p-6 animate-in">
-						<h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">
+					<div className="bg-linear-to-r from-slate-700 via-gray-700 to-slate-800 rounded-xl shadow-2xl text-center w-full max-w-md mx-4 p-6 animate-in">
+						<h2 className="text-2xl font-bold text-white mb-6 text-center">
 							{editingPlanId ? "Confirm Geometry Update" : "Name Your Plan"}
 						</h2>
 
 						{editingPlanId ? (
-							<div className="mb-6">
-								<p className="text-gray-700 mb-3 text-center">
+							<div className="mb-6 text-center">
+								<p className="text-white mb-2 text-lg text-center">
 									Update geometry for{" "}
-									<strong className="text-blue-600">
+									<strong className="text-white uppercase text-center">
 										{plans.find((p) => p.id === editingPlanId)?.name}
 									</strong>
 									?
@@ -389,7 +389,7 @@ const PlanningPageEnhanced = () => {
 								<div className="bg-yellow-50 border-l-4 border-yellow-400 rounded p-4 text-sm text-gray-700">
 									<div className="flex items-start gap-2">
 										<span className="text-lg">⚠️</span>
-										<div>
+										<div className="text-left">
 											<strong className="block mb-1">Warning:</strong>
 											<span>
 												This will replace the old waypoints with the new
@@ -405,7 +405,7 @@ const PlanningPageEnhanced = () => {
 								value={planName}
 								onChange={(e) => setPlanName(e.target.value)}
 								placeholder="Enter plan name..."
-								className="w-full px-4 py-3 rounded-lg mb-6 text-base bg-white/20 focus:outline-none focus:ring-2 focus:ring-white transition-all"
+								className="w-full px-4 py-3 text-white rounded-lg mb-6 text-base bg-white/20 focus:outline-none focus:ring-2 focus:ring-white transition-all shadow-2xl hover:scale-200"
 								onKeyDown={(e) => {
 									if (e.key === "Enter") handleConfirmPlanName();
 									if (e.key === "Escape") handleCancelNameDialog();
@@ -417,13 +417,13 @@ const PlanningPageEnhanced = () => {
 						<div className="flex gap-3 justify-end">
 							<button
 								onClick={handleCancelNameDialog}
-								className="px-6 py-2.5 rounded-lg bg-white/10 hover:bg-red-500/80 text-gray-700 cursor-pointer text-sm font-semibold transition-all shadow-md hover:shadow-lg"
+								className="px-6 py-2.5 rounded-lg bg-white/10 hover:bg-red-500/80 text-white cursor-pointer text-sm font-semibold transition-all shadow-md hover:shadow-white/20"
 							>
 								Cancel
 							</button>
 							<button
 								onClick={handleConfirmPlanName}
-								className="px-6 py-2.5 rounded-lg bg-white/10 text-gray-700 cursor-pointer text-sm font-semibold hover:bg-green-500/80 transition-all shadow-md hover:shadow-lg"
+								className="px-6 py-2.5 rounded-lg bg-white/10 text-white cursor-pointer text-sm font-semibold hover:bg-green-500/80 transition-all shadow-md hover:shadow-white/20"
 							>
 								{editingPlanId ? "Update Geometry" : "Save Plan"}
 							</button>

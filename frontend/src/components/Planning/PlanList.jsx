@@ -159,9 +159,9 @@ const PlanList = ({
 										}`}
 										onClick={() => handlePlanClick(plan)}
 									>
-										<div className="flex justify-between items-start">
+										<div className="flex justify-between items-start px-4 ">
 											<div className="flex min-w-0 flex-col gap-5">
-												<strong className="text-white text-base block truncate">
+												<strong className="text-white text-base block truncate uppercase">
 													{plan.name}
 												</strong>
 												<div className=" text-xm text-white/60 mt-2 space-y-1">
@@ -225,13 +225,13 @@ const PlanList = ({
 			{/* Edit Dialog */}
 			{editingPlan && (
 				<div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex justify-center items-center z-2000">
-					<div className="bg-white/75 backdrop-blur-xl rounded-xl p-6 w-full max-w-md mx-4 animate-in shadow-2xl">
-						<h2 className="mt-0 mb-4 text-gray-800 text-2xl font-semibold text-center">
+					<div className="bg-linear-to-r from-slate-700 via-gray-700 to-slate-800 backdrop-blur-xl rounded-xl p-6 w-full max-w-md mx-4 animate-in shadow-2xl">
+						<h2 className="mt-0 mb-4 text-white text-2xl font-semibold text-center">
 							Edit Plan
 						</h2>
 
 						<div className="mb-4">
-							<label className="block text-sm font-medium text-gray-700 mb-2">
+							<label className="block text-sm font-bold text-white mb-2">
 								Plan Name
 							</label>
 							<input
@@ -239,13 +239,13 @@ const PlanList = ({
 								value={editName}
 								onChange={(e) => setEditName(e.target.value)}
 								placeholder="Enter plan name..."
-								className="w-full px-3 py-2  bg-white/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent"
+								className="w-full px-3 py-2 font-medium text-white bg-white/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent"
 								disabled={isUpdating}
 							/>
 						</div>
 
 						<div className="mb-6">
-							<label className="block text-sm font-medium text-gray-700 mb-2">
+							<label className="block text-sm font-bold text-white  mb-2">
 								Description
 							</label>
 							<input
@@ -253,12 +253,12 @@ const PlanList = ({
 								onChange={(e) => setEditDescription(e.target.value)}
 								placeholder="Enter description..."
 								rows="3"
-								className="w-full px-3 py-2  bg-white/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent resize-none"
+								className="w-full px-3 py-2 text-white font-medium bg-white/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent resize-none"
 								disabled={isUpdating}
 							/>
 						</div>
 
-						<div className="bg-white/20 p-3 rounded-lg mb-4 text-sm text-gray-700">
+						<div className="bg-white/20 p-3 rounded-lg mb-4 text-sm text-white/60">
 							<strong>Note:</strong> To edit waypoints/geometry, close this
 							dialog and use the <TbGeometry /> button.
 						</div>
@@ -266,14 +266,14 @@ const PlanList = ({
 						<div className="flex gap-2 justify-end">
 							<button
 								onClick={handleCancelEdit}
-								className="px-4 py-2 rounded-lg bg-white/10 cursor-pointer text-sm font-semibold hover:bg-red-500/80 transition-colors shadow-md hover:shadow-lg"
+								className="px-4 py-2 rounded-lg text-white bg-white/10 cursor-pointer text-sm font-semibold hover:bg-red-500/80 transition-colors shadow-md hover:shadow-white/20"
 								disabled={isUpdating}
 							>
 								Cancel
 							</button>
 							<button
 								onClick={handleConfirmEdit}
-								className="px-4 py-2 border-none rounded-lg bg-white/10 cursor-pointer text-sm font-semibold hover:bg-green-500/80 transition-colors flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed shadow-md hover:shadow-lg"
+								className="px-4 py-2 border-none rounded-lg text-white  bg-white/10 cursor-pointer text-sm font-semibold hover:bg-green-500/80 transition-colors flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed shadow-md hover:shadow-white/20"
 								disabled={isUpdating}
 							>
 								{isUpdating && (
