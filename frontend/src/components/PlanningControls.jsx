@@ -88,7 +88,7 @@ const PlanningControls = ({
 				className="relative bg-linear-to-br from-gray-800/95 to-gray-900/95 backdrop-blur-2xl border border-gray-700/50 rounded-3xl px-4 py-3 shadow-2xl"
 				onMouseLeave={() => setHoveredIndex(null)}
 			>
-				<div className="flex items-end gap-2 px-10 py-3">
+				<div className="flex items-end gap-2 py-3">
 					{/* Map Type Buttons */}
 					{mapTools.map((tool, index) => {
 						const Icon = tool.icon;
@@ -103,7 +103,7 @@ const PlanningControls = ({
 							>
 								<button
 									onClick={() => handleMapTypeClick(tool.id)}
-									className={`relative flex items-center justify-center rounded-2xl transition-all duration-300 ease-out border-2 ${
+									className={`cursor-pointer relative flex items-center justify-center rounded-2xl transition-all duration-300 ease-out border-2 ${
 										isActive
 											? "bg-blue-500 border-blue-400 text-white shadow-lg shadow-blue-500/50"
 											: "bg-gray-700/50 border-gray-600/50 text-gray-300 hover:bg-gray-600/70 hover:border-gray-500/70"
@@ -126,7 +126,7 @@ const PlanningControls = ({
 								</button>
 
 								{hoveredIndex === index && (
-									<div className="absolute -top-12 bg-gray-800/95 backdrop-blur-sm text-white text-xs px-3 py-1.5 rounded-lg whitespace-nowrap pointer-events-none shadow-xl border border-gray-700/50">
+									<div className="absolute -top-12 bg-gray-800/95 backdrop-blur-sm text-white text-xs px-3 py-1.5 rounded-lg whitespace-nowrap pointer-events-none shadow-xl border border-gray-700/50 cursor-alias">
 										{tool.label}
 									</div>
 								)}
@@ -152,7 +152,7 @@ const PlanningControls = ({
 							>
 								<button
 									onClick={() => handleDrawingModeClick(tool.id)}
-									className={`relative flex items-center justify-center rounded-2xl transition-all duration-300 ease-out border-2 ${
+									className={`cursor-pointer relative flex items-center justify-center rounded-2xl transition-all duration-300 ease-out border-2 ${
 										isActive
 											? "bg-green-500 border-green-400 text-white shadow-lg shadow-green-500/50"
 											: "bg-gray-700/50 border-gray-600/50 text-gray-300 hover:bg-gray-600/70 hover:border-gray-500/70"

@@ -326,8 +326,8 @@ const MapComponent = ({
 
 	return (
 		<MapContainer
-			center={[-7.7956, 110.3695]} // Yogyakarta
-			zoom={13}
+			center={[-7.769997084395498, 110.37839844176182]} // GSP UGM
+			zoom={18}
 			className={`map-container ${drawingMode ? "drawing-mode" : ""}`}
 			style={{
 				height: "100%",
