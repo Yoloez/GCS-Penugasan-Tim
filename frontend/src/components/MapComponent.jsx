@@ -1,11 +1,12 @@
 import React, { useState } from "react";
-import { MapContainer, TileLayer, Marker, Popup, Polyline, LayersControl, Circle, useMapEvents } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, Popup, Polyline, Circle, useMapEvents } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import { uavIcon } from "./Simulation/UAVIcon";
 import MapController from "./Simulation/MapController";
 import ControlPanel from "./Simulation/ControlPanel";
 import TelemetryPanel from "./Simulation/TelemetryPanel";
 import SearchLocation from "./Simulation/SearchLocation";
+import LayerSelector from "./Simulation/LayerSelector";
 import { useTrajectoryManager } from "../hooks/useTrajectoryManager";
 
 // Component to handle double click events on map
@@ -26,6 +27,12 @@ const MapComponent = () => {
   const [speed, setSpeed] = useState(0.000007);
   const [showControlPanel, setShowControlPanel] = useState(true);
   const [activeTrajectories, setActiveTrajectories] = useState(new Set());
+  const [currentLayer, setCurrentLayer] = useState({
+    id: "google-satellite",
+    name: "Google Satellite",
+    url: "https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}",
+    maxZoom: 22,
+  });
 
   // Use custom hook for trajectory management
   const { recordedTrajectories, isLoading, isSaving, recordingStartTime, setRecordingStartTime, saveTrajectoryToDB, clearAllTrajectories, deleteSingleTrajectory } = useTrajectoryManager();
@@ -38,6 +45,17 @@ const MapComponent = () => {
 
   const handleStopRecord = async () => {
     setIsRecording(false);
+
+    // Warn if trajectory is very large
+    if (trajectory.length > 50000) {
+      const confirmed = window.confirm(`⚠️ Warning: Large trajectory detected!\n\n` + `Points: ${trajectory.length}\n` + `This may take longer to save.\n\n` + `Continue saving?`);
+      if (!confirmed) {
+        setTrajectory([]);
+        setRecordingStartTime(null);
+        return;
+      }
+    }
+
     await saveTrajectoryToDB(trajectory);
     setTrajectory([]);
     setRecordingStartTime(null);
@@ -63,29 +81,17 @@ const MapComponent = () => {
     });
   };
 
+  const handleLayerChange = (layer) => {
+    setCurrentLayer(layer);
+  };
+
   return (
     <div style={{ position: "relative" }}>
       <MapContainer center={uavPosition} zoom={18} style={{ height: "100vh", width: "100%" }} scrollWheelZoom={true}>
-        <LayersControl position="topright">
-          <LayersControl.BaseLayer checked name="Google Satellite">
-            <TileLayer url="https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}" attribution="&copy; Google" maxZoom={22} />
-          </LayersControl.BaseLayer>
-
-          <LayersControl.BaseLayer name="Google Hybrid">
-            <TileLayer url="https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}" attribution="&copy; Google" maxZoom={22} />
-          </LayersControl.BaseLayer>
-
-          <LayersControl.BaseLayer name="ESRI Satellite">
-            <TileLayer url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}" attribution="&copy; Esri" maxZoom={19} />
-          </LayersControl.BaseLayer>
-
-          <LayersControl.BaseLayer name="Street Map">
-            <TileLayer url="https://tile.openstreetmap.org/{z}/{x}/{y}.png" attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>' maxZoom={19} />
-          </LayersControl.BaseLayer>
-        </LayersControl>
+        <TileLayer key={currentLayer.id} url={currentLayer.url} attribution={`&copy; ${currentLayer.name}`} maxZoom={currentLayer.maxZoom} />
 
         {/* Precision accuracy circle */}
-        {/* {showPrecisionCircle && (
+        {showPrecisionCircle && (
           <Circle
             center={uavPosition}
             radius={10}
@@ -97,7 +103,7 @@ const MapComponent = () => {
               dashArray: "5, 5",
             }}
           />
-        )} */}
+        )}
 
         {/* Recorded trajectories */}
         {recordedTrajectories
@@ -186,9 +192,10 @@ const MapComponent = () => {
         />
       )}
 
+      {/* Layer Selector */}
+      <LayerSelector selectedLayer={currentLayer.id} onLayerChange={handleLayerChange} />
       {/* Search Location */}
       <SearchLocation onLocationSelect={handleLocationSearch} />
-
       {/* Telemetry Panel */}
       <TelemetryPanel uavPosition={uavPosition} />
     </div>

@@ -10,7 +10,7 @@ export async function getAll(req, res) {
   try {
     const trajectories = await TrajectoryModel.findAll();
     res.json(trajectories);
-  } catch (error) {
+  } catch (error) {``
     console.error("Error getting trajectories:", error);
     res.status(500).json({ error: error.message });
   }

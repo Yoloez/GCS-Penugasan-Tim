@@ -14,6 +14,14 @@ import { useMap } from "react-leaflet";
 const MapController = ({ uavPosition, setUavPosition, isRecording, trajectory, setTrajectory, speed }) => {
   const map = useMap();
   const [keysPressed, setKeysPressed] = useState({});
+  const [frameCount, setFrameCount] = useState(0);
+
+  // Reset frame counter saat recording dimulai
+  useEffect(() => {
+    if (isRecording) {
+      setFrameCount(0);
+    }
+  }, [isRecording]);
 
   useEffect(() => {
     map.setView(uavPosition, map.getZoom());
@@ -60,8 +68,16 @@ const MapController = ({ uavPosition, setUavPosition, isRecording, trajectory, s
 
         setUavPosition(newPosition);
 
+        // Optimisasi: Simpan trajectory setiap 10 frame saja
         if (isRecording) {
-          setTrajectory((prev) => [...prev, newPosition]);
+          setFrameCount((prev) => {
+            const newCount = prev + 1;
+            if (newCount >= 10) {
+              setTrajectory((prevTraj) => [...prevTraj, newPosition]);
+              return 0; // Reset counter
+            }
+            return newCount;
+          });
         }
       }
     }, 1);

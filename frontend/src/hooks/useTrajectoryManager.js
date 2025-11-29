@@ -14,7 +14,7 @@ export const useTrajectoryManager = () => {
   // Load trajectories from database on mount
   useEffect(() => {
     loadTrajectoriesFromDB();
-  }, []); 
+  }, []);
 
   const loadTrajectoriesFromDB = async () => {
     try {
@@ -71,6 +71,12 @@ export const useTrajectoryManager = () => {
 
     try {
       setIsSaving(true);
+
+      // Show loading message for large trajectories
+      if (trajectory.length > 10000) {
+        console.log(`⏳ Saving large trajectory with ${trajectory.length} points. This may take a while...`);
+      }
+
       const savedTrajectory = await saveTrajectory({
         name: trajectoryName,
         points: trajectory,
@@ -90,11 +96,19 @@ export const useTrajectoryManager = () => {
         },
       ]);
 
-      alert(`✅ Trajectory saved!\nDuration: ${Math.round(duration)}s\nDistance: ${Math.round(distance)}m`);
+      alert(`✅ Trajectory saved!\nPoints: ${trajectory.length}\nDuration: ${Math.round(duration)}s\nDistance: ${Math.round(distance)}m`);
       return true;
     } catch (error) {
       console.error("Failed to save trajectory:", error);
-      alert("❌ Failed to save trajectory to database");
+
+      // More specific error messages
+      if (error.name === "AbortError") {
+        alert("❌ Request timeout! Trajectory too large or server not responding.\nTry recording for a shorter duration.");
+      } else if (error.message.includes("payload")) {
+        alert("❌ Trajectory too large to save!\nTry recording for a shorter duration or reduce recording frequency.");
+      } else {
+        alert(`❌ Failed to save trajectory: ${error.message}`);
+      }
       return false;
     } finally {
       setIsSaving(false);

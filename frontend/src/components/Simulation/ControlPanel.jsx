@@ -115,10 +115,10 @@ const ControlPanel = ({
 
       {/* Precision Circle Toggle */}
       <div className="mb-4">
-        <label className="flex items-center cursor-pointer text-sm gap-2">
+        {/* <label className="flex items-center cursor-pointer text-sm gap-2">
           <input type="checkbox" checked={showPrecisionCircle} onChange={onTogglePrecisionCircle} className="cursor-pointer" />
           Show Precision Circle
-        </label>
+        </label> */}
       </div>
 
       <hr className="my-4 border-gray-300" />

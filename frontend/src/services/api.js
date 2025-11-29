@@ -90,7 +90,7 @@ export const deletePlan = async (id) => {
 
 // Get all trajectories
 export const getTrajectories = async () => {
-  try {
+  try {s
     const response = await fetch(`${API_BASE}/trajectories`);
     if (!response.ok) throw new Error("Failed to fetch trajectories");
     return response.json();
